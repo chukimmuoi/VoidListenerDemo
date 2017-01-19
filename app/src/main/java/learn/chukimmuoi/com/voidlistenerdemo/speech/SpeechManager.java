@@ -2,6 +2,7 @@ package learn.chukimmuoi.com.voidlistenerdemo.speech;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.widget.TextView;
@@ -30,6 +31,10 @@ public class SpeechManager implements IConstanst {
 
     private Intent mIntent;
 
+    private AudioManager mAudioManager;
+
+    private int mStreamVolume;
+
     public static SpeechManager getInstance() {
         if (ourInstance == null) {
             synchronized (SpeechManager.class) {
@@ -40,6 +45,8 @@ public class SpeechManager implements IConstanst {
     }
 
     public SpeechManager onCreate(Context context, TextView textVoice, TextView textMessage) {
+        mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
         initialSpeech(context, textVoice, textMessage);
         return ourInstance;
     }
@@ -49,6 +56,10 @@ public class SpeechManager implements IConstanst {
     }
 
     public void onDestroy() {
+        if (mAudioManager != null) {
+            mAudioManager = null;
+        }
+
         if (mSpeechRecognizer != null) {
             stopListener();
             mSpeechRecognizer.destroy();
@@ -62,7 +73,7 @@ public class SpeechManager implements IConstanst {
 
     private void initialSpeech(Context context, TextView textVoice, TextView textMessage) {
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
-        mSpeechRecognizer.setRecognitionListener(new SpeechListener(context, textVoice, textMessage));
+        mSpeechRecognizer.setRecognitionListener(new SpeechListener(context, mAudioManager, mStreamVolume, textVoice, textMessage));
 
         mIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -79,6 +90,9 @@ public class SpeechManager implements IConstanst {
     private void startListener() {
         if (mSpeechRecognizer != null) {
             mSpeechRecognizer.startListening(mIntent);
+
+            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
         }
     }
 

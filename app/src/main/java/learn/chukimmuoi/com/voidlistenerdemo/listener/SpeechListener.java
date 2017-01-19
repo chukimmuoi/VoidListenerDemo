@@ -2,6 +2,7 @@ package learn.chukimmuoi.com.voidlistenerdemo.listener;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
@@ -24,26 +25,32 @@ import static learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService.ACTION
  * Created by CHUKIMMUOI on 1/13/2017.
  */
 
-
 public class SpeechListener implements RecognitionListener {
 
     private static final String TAG = SpeechListener.class.getSimpleName();
+
+    private Context mContext;
+
+    private AudioManager mAudioManager;
 
     private TextView mTextVoice;
 
     private TextView mTextMessage;
 
-    private Context mContext;
+    private int mStreamVolume;
 
-    public SpeechListener(Context context, TextView textVoice, TextView textMessage) {
-        mContext     = context;
-        mTextVoice   = textVoice;
-        mTextMessage = textMessage;
+    public SpeechListener(Context context, AudioManager audioManager, int streamVolume, TextView textVoice, TextView textMessage) {
+        mContext      = context;
+        mAudioManager = audioManager;
+        mStreamVolume = streamVolume;
+        mTextVoice    = textVoice;
+        mTextMessage  = textMessage;
     }
 
     @Override
     public void onReadyForSpeech(Bundle params) {
         Log.e(TAG, "onReadyForSpeech");
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mStreamVolume, 0);
 
 //        mTextView.setText("");
         mTextMessage.setText("Listening...");
