@@ -14,8 +14,10 @@ public class SpeechService extends IntentService {
 
     private static final String TAG = SpeechService.class.getSimpleName();
 
-    public static final String ACTION_START = "learn.chukimmuoi.com.voidlistenerdemo.service.action.START";
-    public static final String ACTION_STOP  = "learn.chukimmuoi.com.voidlistenerdemo.service.action.STOP";
+    public static final String ACTION_START
+            = "learn.chukimmuoi.com.voidlistenerdemo.service.action.START";
+    public static final String ACTION_STOP
+            = "learn.chukimmuoi.com.voidlistenerdemo.service.action.STOP";
 
     public SpeechService() {
         super("SpeechService");

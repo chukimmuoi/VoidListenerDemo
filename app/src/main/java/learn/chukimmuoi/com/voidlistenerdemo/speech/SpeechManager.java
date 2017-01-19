@@ -51,7 +51,7 @@ public class SpeechManager implements IConstanst {
         return ourInstance;
     }
 
-    public void onStart(){
+    public void onStart() {
         startListener();
     }
 
@@ -73,15 +73,19 @@ public class SpeechManager implements IConstanst {
 
     private void initialSpeech(Context context, TextView textVoice, TextView textMessage) {
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
-        mSpeechRecognizer.setRecognitionListener(new SpeechListener(context, mAudioManager, mStreamVolume, textVoice, textMessage));
+        mSpeechRecognizer.setRecognitionListener(new SpeechListener(context, mAudioManager,
+                mStreamVolume, textVoice, textMessage));
 
         mIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        mIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getClass().getPackage().getName());
+        mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        mIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+                this.getClass().getPackage().getName());
 
         mIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, MAX_RESULTS_VOID_SEARCH);
         mIntent.putExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES, EXTRA_CONFIDENCE_SCORES);
-        mIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS);
+        mIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,
+                EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS);
 
         mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, LANGUAGES_VI);
         mIntent.putExtra(EXTRA_ADDITIONAL_LANGUAGES, new String[]{LANGUAGES_VI});

@@ -39,7 +39,8 @@ public class SpeechListener implements RecognitionListener {
 
     private int mStreamVolume;
 
-    public SpeechListener(Context context, AudioManager audioManager, int streamVolume, TextView textVoice, TextView textMessage) {
+    public SpeechListener(Context context, AudioManager audioManager, int streamVolume,
+                          TextView textVoice, TextView textMessage) {
         mContext      = context;
         mAudioManager = audioManager;
         mStreamVolume = streamVolume;
