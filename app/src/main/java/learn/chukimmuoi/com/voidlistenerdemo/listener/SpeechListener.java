@@ -53,7 +53,6 @@ public class SpeechListener implements RecognitionListener {
         Log.e(TAG, "onReadyForSpeech");
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mStreamVolume, 0);
 
-//        mTextView.setText("");
         mTextMessage.setText("Listening...");
     }
 
@@ -64,7 +63,7 @@ public class SpeechListener implements RecognitionListener {
     }
 
     @Override
-    public void onRmsChanged(float rmsdB) {
+    public void onRmsChanged(float rmsDB) {
         Log.e(TAG, "onRmsChanged");
 
     }
