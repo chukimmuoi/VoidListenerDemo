@@ -35,6 +35,8 @@ public class SpeechManager implements IConstanst {
 
     private int mStreamVolume;
 
+    private boolean isListening;
+
     public static SpeechManager getInstance() {
         if (ourInstance == null) {
             synchronized (SpeechManager.class) {
@@ -53,6 +55,10 @@ public class SpeechManager implements IConstanst {
 
     public void onStart() {
         startListener();
+    }
+
+    public void onStop() {
+        stopListener();
     }
 
     public void onDestroy() {
@@ -74,7 +80,7 @@ public class SpeechManager implements IConstanst {
     private void initialSpeech(Context context, TextView textVoice, TextView textMessage) {
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
         mSpeechRecognizer.setRecognitionListener(new SpeechListener(context, mAudioManager,
-                mStreamVolume, textVoice, textMessage));
+                mStreamVolume, textVoice, textMessage, ourInstance));
 
         mIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -93,17 +99,31 @@ public class SpeechManager implements IConstanst {
 
     private void startListener() {
         if (mSpeechRecognizer != null) {
-            mSpeechRecognizer.startListening(mIntent);
+            if (!isListening) {
+                isListening = true;
 
-            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                mSpeechRecognizer.startListening(mIntent);
+
+                mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            }
         }
     }
 
     private void stopListener() {
         if (mSpeechRecognizer != null) {
+            isListening = false;
+
             mSpeechRecognizer.stopListening();
             mSpeechRecognizer.cancel();
         }
+    }
+
+    public boolean isListening() {
+        return isListening;
+    }
+
+    public void setListening(boolean listening) {
+        isListening = listening;
     }
 }

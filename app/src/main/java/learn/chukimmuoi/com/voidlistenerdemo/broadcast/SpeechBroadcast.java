@@ -48,7 +48,7 @@ public class SpeechBroadcast extends BroadcastReceiver {
 
     public void handleActionStop() {
         if (mSpeechManager != null) {
-            mSpeechManager.onDestroy();
+            mSpeechManager.onStop();
         }
     }
 }

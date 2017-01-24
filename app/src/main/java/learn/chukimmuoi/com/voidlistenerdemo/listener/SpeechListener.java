@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService;
+import learn.chukimmuoi.com.voidlistenerdemo.speech.SpeechManager;
 
 import static learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService.ACTION_START;
 
@@ -29,6 +31,12 @@ public class SpeechListener implements RecognitionListener {
 
     private static final String TAG = SpeechListener.class.getSimpleName();
 
+    private static final long MILLIS_IN_FUTURE = 10000;
+
+    private static final long COUNT_DOWN_INTERVAL = 1000;
+
+    private static final long MIN_MILLIS_UNTIL_FINISHED = 3000;
+
     private Context mContext;
 
     private AudioManager mAudioManager;
@@ -39,18 +47,23 @@ public class SpeechListener implements RecognitionListener {
 
     private int mStreamVolume;
 
+    private SpeechManager mSpeechManager;
+
     public SpeechListener(Context context, AudioManager audioManager, int streamVolume,
-                          TextView textVoice, TextView textMessage) {
-        mContext      = context;
-        mAudioManager = audioManager;
-        mStreamVolume = streamVolume;
-        mTextVoice    = textVoice;
-        mTextMessage  = textMessage;
+                          TextView textVoice, TextView textMessage, SpeechManager speechManager) {
+        mContext       = context;
+        mAudioManager  = audioManager;
+        mStreamVolume  = streamVolume;
+        mTextVoice     = textVoice;
+        mTextMessage   = textMessage;
+        mSpeechManager = speechManager;
     }
 
     @Override
     public void onReadyForSpeech(Bundle params) {
         Log.e(TAG, "onReadyForSpeech");
+        mCountDownTimer.start();
+
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mStreamVolume, 0);
 
         mTextMessage.setText("Listening...");
@@ -59,6 +72,8 @@ public class SpeechListener implements RecognitionListener {
     @Override
     public void onBeginningOfSpeech() {
         Log.e(TAG, "onBeginningOfSpeech");
+        mSpeechManager.setListening(true);
+
         mTextMessage.setText("Listening...");
     }
 
@@ -83,18 +98,25 @@ public class SpeechListener implements RecognitionListener {
     @Override
     public void onError(int error) {
         Log.e(TAG, "onError");
+        mSpeechManager.setListening(false);
+
+        mCountDownTimer.cancel();
+
         actionStart(mContext);
     }
 
     @Override
     public void onResults(Bundle results) {
         Log.e(TAG, "onResults");
+        mSpeechManager.setListening(false);
+
+        mCountDownTimer.cancel();
 
         String str = new String();
         ArrayList data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         for (int i = 0; i < data.size(); i++) {
             Log.e(TAG, "result: " + data.get(i));
-            str += ((i != 0) ? ", " : "") + data.get(i);
+            str += ((i != 0) ? ",\n" : "") + data.get(i);
         }
         mTextVoice.setText(str);
         mTextMessage.setText("Success");
@@ -124,4 +146,19 @@ public class SpeechListener implements RecognitionListener {
         intent.setAction(ACTION_START);
         context.startService(intent);
     }
+
+    private CountDownTimer mCountDownTimer
+            = new CountDownTimer(MILLIS_IN_FUTURE, COUNT_DOWN_INTERVAL) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            if (millisUntilFinished < MIN_MILLIS_UNTIL_FINISHED) {
+                actionStop(mContext);
+            }
+        }
+
+        @Override
+        public void onFinish() {
+            actionStart(mContext);
+        }
+    };
 }

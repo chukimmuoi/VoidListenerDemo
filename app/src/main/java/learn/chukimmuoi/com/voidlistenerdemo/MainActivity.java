@@ -32,15 +32,15 @@ public class MainActivity extends AppCompatActivity implements IConstanst {
         initialUI();
 
         mSpeechManager = SpeechManager.getInstance().onCreate(MainActivity.this, mTvVoid, mTvMessage);
-
-        mSpeechBroadcast = new SpeechBroadcast(mSpeechManager);
-
-        mSpeechBroadcast.handleActionStart();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+
+        mSpeechBroadcast = new SpeechBroadcast(mSpeechManager);
+        mSpeechBroadcast.handleActionStart();
+
         registerReceiver(mSpeechBroadcast, new IntentFilter(ACTION_START));
         registerReceiver(mSpeechBroadcast, new IntentFilter(ACTION_STOP));
     }
