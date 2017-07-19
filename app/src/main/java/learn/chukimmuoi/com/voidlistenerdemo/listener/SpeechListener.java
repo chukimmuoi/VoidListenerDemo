@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService;
 import learn.chukimmuoi.com.voidlistenerdemo.speech.SpeechManager;
+import learn.chukimmuoi.com.voidlistenerdemo.ui.SpeechProgressView;
 
 import static learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService.ACTION_START;
 
@@ -41,6 +42,8 @@ public class SpeechListener implements RecognitionListener {
 
     private AudioManager mAudioManager;
 
+    private SpeechProgressView mProgress;
+
     private TextView mTextVoice;
 
     private TextView mTextMessage;
@@ -49,11 +52,12 @@ public class SpeechListener implements RecognitionListener {
 
     private SpeechManager mSpeechManager;
 
-    public SpeechListener(Context context, AudioManager audioManager, int streamVolume,
+    public SpeechListener(Context context, AudioManager audioManager, int streamVolume, SpeechProgressView progress,
                           TextView textVoice, TextView textMessage, SpeechManager speechManager) {
         mContext       = context;
         mAudioManager  = audioManager;
         mStreamVolume  = streamVolume;
+        mProgress      = progress;
         mTextVoice     = textVoice;
         mTextMessage   = textMessage;
         mSpeechManager = speechManager;
@@ -72,6 +76,9 @@ public class SpeechListener implements RecognitionListener {
     @Override
     public void onBeginningOfSpeech() {
         Log.e(TAG, "onBeginningOfSpeech");
+        if (mProgress != null)
+            mProgress.onBeginningOfSpeech();
+
         mSpeechManager.setListening(true);
 
         mTextMessage.setText("Listening...");
@@ -80,6 +87,8 @@ public class SpeechListener implements RecognitionListener {
     @Override
     public void onRmsChanged(float rmsDB) {
         Log.e(TAG, "onRmsChanged");
+        if (mProgress != null)
+            mProgress.onRmsChanged(rmsDB);
 
     }
 
@@ -93,6 +102,8 @@ public class SpeechListener implements RecognitionListener {
     public void onEndOfSpeech() {
         Log.e(TAG, "onEndOfSpeech");
 
+        if (mProgress != null)
+            mProgress.onEndOfSpeech();
     }
 
     @Override
@@ -101,6 +112,9 @@ public class SpeechListener implements RecognitionListener {
         mSpeechManager.setListening(false);
 
         mCountDownTimer.cancel();
+
+        if (mProgress != null)
+            mProgress.onResultOrOnError();
 
         actionStart(mContext);
     }
@@ -120,6 +134,10 @@ public class SpeechListener implements RecognitionListener {
         }
         mTextVoice.setText(str);
         mTextMessage.setText("Success");
+
+        if (mProgress != null)
+            mProgress.onResultOrOnError();
+
         actionStart(mContext);
     }
 

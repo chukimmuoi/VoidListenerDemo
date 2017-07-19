@@ -8,6 +8,7 @@ import android.widget.TextView;
 import learn.chukimmuoi.com.voidlistenerdemo.broadcast.SpeechBroadcast;
 import learn.chukimmuoi.com.voidlistenerdemo.constanst.IConstanst;
 import learn.chukimmuoi.com.voidlistenerdemo.speech.SpeechManager;
+import learn.chukimmuoi.com.voidlistenerdemo.ui.SpeechProgressView;
 
 import static learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService.ACTION_START;
 import static learn.chukimmuoi.com.voidlistenerdemo.service.SpeechService.ACTION_STOP;
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity implements IConstanst {
 
     private TextView mTvMessage;
 
+    private SpeechProgressView progress;
+
     private SpeechManager mSpeechManager;
 
     private SpeechBroadcast mSpeechBroadcast;
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements IConstanst {
 
         initialUI();
 
-        mSpeechManager = SpeechManager.getInstance().onCreate(MainActivity.this, mTvVoid, mTvMessage);
+        mSpeechManager = SpeechManager.getInstance().onCreate(MainActivity.this, progress, mTvVoid, mTvMessage);
     }
 
     @Override
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements IConstanst {
     }
 
     private void initialUI() {
+        progress   = (SpeechProgressView) findViewById(R.id.progress);
         mTvVoid    = (TextView) findViewById(R.id.tv_void);
         mTvMessage = (TextView) findViewById(R.id.tv_message);
     }

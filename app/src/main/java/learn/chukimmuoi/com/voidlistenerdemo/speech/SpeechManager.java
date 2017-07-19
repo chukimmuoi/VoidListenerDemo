@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import learn.chukimmuoi.com.voidlistenerdemo.constanst.IConstanst;
 import learn.chukimmuoi.com.voidlistenerdemo.listener.SpeechListener;
+import learn.chukimmuoi.com.voidlistenerdemo.ui.SpeechProgressView;
 
 /**
  * @author:Hanet Electronics
@@ -46,10 +47,10 @@ public class SpeechManager implements IConstanst {
         return ourInstance;
     }
 
-    public SpeechManager onCreate(Context context, TextView textVoice, TextView textMessage) {
+    public SpeechManager onCreate(Context context, SpeechProgressView progress, TextView textVoice, TextView textMessage) {
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        initialSpeech(context, textVoice, textMessage);
+        initialSpeech(context, progress, textVoice, textMessage);
         return ourInstance;
     }
 
@@ -77,10 +78,11 @@ public class SpeechManager implements IConstanst {
         }
     }
 
-    private void initialSpeech(Context context, TextView textVoice, TextView textMessage) {
+    private void initialSpeech(Context context, SpeechProgressView progress,
+                               TextView textVoice, TextView textMessage) {
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
         mSpeechRecognizer.setRecognitionListener(new SpeechListener(context, mAudioManager,
-                mStreamVolume, textVoice, textMessage, ourInstance));
+                mStreamVolume, progress, textVoice, textMessage, ourInstance));
 
         mIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         mIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
